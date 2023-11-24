@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - db_data:/data/db
+
+  products:
+    image: ${DOCKER_REGISTRY-}products
+    build:
+      context: .
+      dockerfile: Products/Dockerfile
+
+volumes:
+  db_data:
+    driver: local
