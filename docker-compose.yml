@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: Products/Dockerfile
+    ports:
+      - 8080:8080 
 
 volumes:
   db_data:

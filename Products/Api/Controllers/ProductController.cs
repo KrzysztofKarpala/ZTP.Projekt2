@@ -76,18 +76,48 @@ namespace Products.Api.Controllers
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPost()]
-        public async Task<ActionResult> AddProduct([FromBody] ProductDto product)
+        public async Task<ActionResult<ProductResponseDto>> AddProduct([FromBody] ProductDto product)
         {
             try
             {
                 var command = new AddProductCommand(product);
-                await _mediator.Send(command);
+                var productResponse = await _mediator.Send(command);
                 _logger.LogInformation(200, $"Added product: {product.ProductName}");
-                return Ok();
+                return Ok(productResponse);
             }
             catch (ApplicationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [HttpPatch("{productId}")]
+        public async Task<ActionResult<ProductResponseDto>> UpdateProduct([FromRoute] Guid productId, [FromBody] ProductDto product)
+        {
+            try
+            {
+                var updateProductCommand = new UpdateProductCommand(productId, product);
+                var productResponse = await _mediator.Send(updateProductCommand);
+                _logger.LogInformation(200, $"Updated product: {updateProductCommand.product.ProductName}");
+                return Ok(productResponse);
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {

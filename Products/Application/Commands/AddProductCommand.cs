@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Products.Application.Dto;
 using Products.Core.Entities;
 using Products.Core.Repositories;
 
 namespace Products.Application.Commands
 {
-    public record AddProductCommand(ProductDto product) : IRequest
+    public record AddProductCommand(ProductDto product) : IRequest<ProductResponseDto>
     {
     }
-    public class AddProductCommandHandler : IRequestHandler<AddProductCommand>
+    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, ProductResponseDto>
     {
         private readonly IProductRepository _productRepository;
         private readonly ILogger<AddProductCommandHandler> _logger;
@@ -18,12 +19,13 @@ namespace Products.Application.Commands
             _logger = logger;
         }
 
-        public async Task Handle(AddProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductResponseDto> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var product = Product.Create(request.product.ProductName, request.product.ProductDescription, request.product.ProductQuantity);
                 await _productRepository.AddOrReplaceProduct(product);
+                return product.Adapt<ProductResponseDto>();
             }
             catch (ApplicationException ex)
             {

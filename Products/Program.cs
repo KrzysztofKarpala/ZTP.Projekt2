@@ -8,6 +8,7 @@ using Products.Infrastructure.Mongo.DatabaseSettings;
 using Products.Core.Repositories;
 using Products.Infrastructure.Mongo.Repositories;
 using Products.Application.Queries;
+using Microsoft.OpenApi.Models;
 
 var root = Directory.GetCurrentDirectory();
 var dotenv = Path.Combine(root, ".env");
@@ -47,11 +48,22 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = $"products/swagger/{{documentName}}/swagger.json";
+        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        {
+            swaggerDoc.Servers.Add(new OpenApiServer { Url = $"http://{httpReq.Host.Value}" });
+        });
+    });
+    app.UseSwaggerUI(c =>
+    {
+        c.RoutePrefix = "products/swagger";
+        c.SwaggerEndpoint("v1/swagger.json", "Products API v1");
+    });
 }
 
-app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
