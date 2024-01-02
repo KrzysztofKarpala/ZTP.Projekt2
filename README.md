@@ -73,7 +73,7 @@ The implementation of this API follows the principles of Domain-Driven Design (D
 
 ## Installation and Running Instructions
 
-1. Clone the repository: `git clone https://github.com/KrzysztofKarpala/ProductsApi.git`
+1. Clone the repository: `git clone https://github.com/KrzysztofKarpala/ZTP.Projekt2.git`
 2. Open the project in Visual Studio or another ASP.NET Core-compatible environment.
 3. Run the application: `dotnet run`
 
