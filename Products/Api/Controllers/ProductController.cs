@@ -44,6 +44,55 @@ namespace Products.Api.Controllers
 
         }
 
+
+        /// <summary>
+        /// Returns a list of all products.
+        /// </summary>
+        /// <response code="200">Returns a list of all products.</response>
+        /// <returns></returns>
+        [HttpGet("eshop")]
+        public async Task<ActionResult<List<ProductEShopResponseDto>>> GetAllProductsEShop()
+        {
+            try
+            {
+                var query = new GetProductsEShopQuery();
+                var result = await _mediator.Send(query);
+
+                _logger.LogInformation(200, "Fetched all products");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Returns product eshop by id.
+        /// </summary>
+        /// <response code="200">Returns product eshpp by id.</response>
+        /// <returns></returns>
+        [HttpGet("{productId}")]
+        public async Task<ActionResult<ProductEShopResponseDto>> GetProductEshopByProductId([FromRoute] Guid productId)
+        {
+            try
+            {
+                var query = new GetProductEShopByIdQuery(productId);
+                var result = await _mediator.Send(query);
+
+                _logger.LogInformation(200, $"Fetched product: {productId}");
+                return Ok(result);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         /// <summary>
         /// Returns product by id.
         /// </summary>
